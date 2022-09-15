@@ -30,7 +30,7 @@ router.post("/register", async (req, res) => {
     const oldUser = await Register.findOne({ email });
 
     if (oldUser) {
-      return res.status(409).send("User Already Exist. Please Login");
+      return res.status(409).json({msg:"User Already Exist. Please Login"});
     }
 
     //Encrypt user password
@@ -78,28 +78,17 @@ router.post("/login", async (req, res) => {
 
     // Validate user input
     if (!(email && password)) {
-      res.status(400).send("All input is required");
+      res.status(400).json({msg:"All input is required"});
     }
     // Validate if user exist in our database
     const user = await Register.findOne({ email });
-console.log('user :',user);
+
     if (user && (await bcrypt.compare(password, user.password))) {
-      // Create token
-      const token = jwt.sign(
-        { user_id: user._id, email },
-        process.env.TOKEN_KEY,
-        {
-          expiresIn: "2h",
-        }
-      );
-
-      // save user token
-      user.token = token;
-
       // user
-      res.status(200).json(user);
+      res.status(200).json({status : true, msg:"Login success..", token : user.token});
+    } else {
+      res.status(400).json({status:false,msg:"Invalid Credentials"});
     }
-    res.status(400).send("Invalid Credentials");
   } catch (err) {
     console.log(err);
   }
@@ -116,7 +105,7 @@ router.post('/add', auth, async (req, res) => {
 
     try {
         const dataToSave = await data.save();
-        res.status(200).json(dataToSave)
+        res.status(200).json({status : true, msg:"Add success.."})
     }
     catch (error) {
         res.status(400).json({message: error.message})
@@ -134,7 +123,7 @@ router.post('/addmark', auth, async (req, res) => {
 
     try {
         const dataToSave = await data.save();
-        res.status(200).json(dataToSave)
+        res.status(200).json({status : true, msg:"Marks add success.."})
     }
     catch (error) {
         res.status(400).json({message: error.message})
@@ -145,7 +134,7 @@ router.post('/addmark', auth, async (req, res) => {
 router.get('/view', auth, async (req, res) => {
     try{
         const data = await Model.find();
-        res.json(data)
+        res.json({status:true, data:data})
     }
     catch(error){
         res.status(500).json({message: error.message})
@@ -156,7 +145,7 @@ router.get('/view', auth, async (req, res) => {
 router.get('/getOne/:id', auth, async (req, res) => {
     try{
         const data = await Model.findById(req.params.id);
-        res.json(data)
+        res.json({status:true, data:data})
     }
     catch(error){
         res.status(500).json({message: error.message})
@@ -174,7 +163,7 @@ router.patch('/update/:id', auth, async (req, res) => {
             id, updatedData, options
         )
 
-        res.send(result)
+        res.json({status:true, msg:"Upadte is success.."})
     }
     catch (error) {
         res.status(400).json({ message: error.message })
@@ -186,7 +175,7 @@ router.delete('/delete/:id', auth, async (req, res) => {
     try {
         const id = req.params.id;
         const data = await Model.findByIdAndDelete(id)
-        res.send(`Document with ${data.name} has been deleted..`)
+        res.json({status:true, msg:`Document with ${data.name} has been deleted..`})
     }
     catch (error) {
         res.status(400).json({ message: error.message })

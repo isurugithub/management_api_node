@@ -6,6 +6,8 @@ var jsonParser = bodyParser.json();
 const mongoose = require('mongoose');
 const mongoString = process.env.DATABASE_URL;
 const routes = require('./routes/routes');
+var cors = require('cors')
+
 
 mongoose.connect(mongoString);
 const database = mongoose.connection;
@@ -18,6 +20,8 @@ database.once('connected', () => {
     console.log('Database Connected');
 })
 const app = express();
+
+app.use(cors())
 
 app.use(bodyParser.urlencoded({ extended: false }))
 
