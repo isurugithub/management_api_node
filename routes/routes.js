@@ -60,7 +60,7 @@ router.post("/register", async (req, res) => {
     const dataToSave = await register.save();
 
     // return new register
-    res.status(200).json(dataToSave);
+    res.status(200).json({status : true, msg:"Register success.."});
   } catch (err) {
     console.log(err);
   }
