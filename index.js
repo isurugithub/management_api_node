@@ -31,6 +31,6 @@ app.use('/api', routes);
 
 // app.use(express.json());
 
-app.listen(3000, () => {
+app.listen(process.env.PORT || 5000, () => {
     console.log(`Server Started at ${3000}`)
 })
