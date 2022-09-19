@@ -47,9 +47,9 @@ router.post("/register", async (req, res) => {
     const token = jwt.sign(
         { register: register._id, email },
         process.env.TOKEN_KEY,
-        {
-          expiresIn: "2h",
-        }
+        // {
+        //   expiresIn: "2h",
+        // }
     );
 
     // save register token
